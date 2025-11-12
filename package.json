@@ -1,0 +1,18 @@
+{
+  "name": "smart-unibot-backend",
+  "version": "0.1.0",
+  "description": "Asistente universitario inteligente: backend HTTP ligero con servicios de automatización e IA opcionales",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "lint": "node ./scripts/check-format.js",
+    "test": "echo \"No automated tests configured\""
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
