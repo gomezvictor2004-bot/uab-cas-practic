@@ -1,0 +1,40 @@
+{
+  "students": [
+    {
+      "id": "stu-001",
+      "name": "Estudiante Demo",
+      "email": "demo@student.edu",
+      "telegramId": "123456789"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-001",
+      "title": "Entrega de prácticas Arquitectura Empresarial",
+      "dueDate": "2024-11-15",
+      "course": "Arquitectura Empresarial",
+      "studentId": "stu-001",
+      "status": "pending"
+    }
+  ],
+  "events": [
+    {
+      "id": "event-001",
+      "title": "Clase de Arquitectura Empresarial",
+      "datetime": "2024-11-12T14:00:00.000Z",
+      "location": "Aula 204",
+      "course": "Arquitectura Empresarial",
+      "studentId": "stu-001"
+    }
+  ],
+  "documents": [],
+  "news": [
+    {
+      "id": "news-001",
+      "title": "Nueva convocatoria de becas",
+      "url": "https://campus.example.edu/news/becas",
+      "summary": "La universidad abre una nueva convocatoria de becas para movilidad internacional.",
+      "publishedAt": "2024-11-10T08:00:00.000Z"
+    }
+  ]
+}
