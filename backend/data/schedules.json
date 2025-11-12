@@ -1,0 +1,79 @@
+{
+  "courses": [
+    {
+      "id": "eit-1",
+      "name": "1r curs - Empresa i Tecnologia",
+      "group": "20 - Matí",
+      "semesters": {
+        "1": [
+          { "day": "Dilluns",  "start": "09:00", "end": "11:00", "code": "102173", "subject": "Economia de l'Empresa", "type": "TE", "room": "" },
+          { "day": "Dilluns",  "start": "11:15", "end": "12:15", "code": "102120", "subject": "Introducció a l'Economia", "type": "TE", "room": "" },
+          { "day": "Dilluns",  "start": "12:15", "end": "13:15", "code": "102120", "subject": "Introducció a l'Economia", "type": "PAUL", "room": "" },
+
+          { "day": "Dimarts",  "start": "09:00", "end": "11:00", "code": "102151", "subject": "IRP-DA", "type": "TE", "room": "" },
+          { "day": "Dimarts",  "start": "11:15", "end": "12:15", "code": "102097", "subject": "Matemàtiques I", "type": "TE", "room": "" },
+          { "day": "Dimarts",  "start": "12:15", "end": "13:15", "code": "102097", "subject": "Matemàtiques I", "type": "PAUL", "room": "" },
+
+          { "day": "Dijous",   "start": "09:00", "end": "11:00", "code": "102097", "subject": "Matemàtiques I", "type": "TE", "room": "" },
+          { "day": "Dijous",   "start": "11:15", "end": "12:15", "code": "102173", "subject": "Economia de l'Empresa", "type": "TE", "room": "" },
+          { "day": "Dijous",   "start": "12:15", "end": "13:15", "code": "102173", "subject": "Economia de l'Empresa", "type": "PAUL", "room": "" }
+        ],
+        "2": [
+          { "day": "Divendres","start": "09:00", "end": "11:00", "code": "102196", "subject": "Comptabilitat Bàsica", "type": "TE", "room": "" },
+          { "day": "Divendres","start": "11:15", "end": "12:15", "code": "102096", "subject": "Matemàtiques II", "type": "TE", "room": "" }
+        ]
+      }
+    },
+    {
+      "id": "eit-2",
+      "name": "2n curs - Empresa i Tecnologia",
+      "group": "20 - Matí",
+      "semesters": {
+        "1": [
+          { "day": "Dilluns",  "start": "09:00", "end": "11:00", "code": "102144", "subject": "Economia Espanyola", "type": "TE", "room": "" },
+          { "day": "Dimarts",  "start": "09:00", "end": "11:00", "code": "102119", "subject": "Microeconomia", "type": "TE", "room": "" },
+          { "day": "Dijous",   "start": "09:00", "end": "11:00", "code": "102114", "subject": "Estadística II", "type": "TE", "room": "" }
+        ],
+        "2": [
+          { "day": "Dilluns",  "start": "09:00", "end": "11:00", "code": "104609", "subject": "Gestió per processos", "type": "TE", "room": "" },
+          { "day": "Dimarts",  "start": "09:00", "end": "11:00", "code": "102148", "subject": "Introducció als sistemes d'informació", "type": "TE", "room": "" },
+          { "day": "Dijous",   "start": "09:00", "end": "11:00", "code": "102150", "subject": "Investigació Operativa", "type": "TE", "room": "" }
+        ]
+      }
+    },
+    {
+      "id": "eit-3",
+      "name": "3r curs - Empresa i Tecnologia",
+      "group": "20 - Matí",
+      "semesters": {
+        "1": [
+          { "day": "Dilluns",  "start": "09:00", "end": "11:00", "code": "104608", "subject": "Sistemes de Gestió de costos", "type": "TE", "room": "" },
+          { "day": "Dimarts",  "start": "09:00", "end": "11:00", "code": "102181", "subject": "Direcció Estratègica de l'Empresa", "type": "TE", "room": "" },
+          { "day": "Dijous",   "start": "09:00", "end": "11:00", "code": "102182", "subject": "Direcció d'Operacions", "type": "TE", "room": "" }
+        ],
+        "2": [
+          { "day": "Dilluns",  "start": "09:00", "end": "11:00", "code": "107570", "subject": "Introducció a la Gestió de la Innovació", "type": "TE", "room": "" },
+          { "day": "Dimarts",  "start": "09:00", "end": "11:00", "code": "102191", "subject": "Projectes d'Innovació Tecnològica", "type": "TE", "room": "" },
+          { "day": "Dijous",   "start": "09:00", "end": "11:00", "code": "106685", "subject": "Màrqueting digital", "type": "TE", "room": "" }
+        ]
+      }
+    },
+    {
+      "id": "eit-4",
+      "name": "4t curs - Empresa i Tecnologia",
+      "group": "20 / Tarda (mix)",
+      "semesters": {
+        "1": [
+          { "day": "Dilluns",  "start": "09:00", "end": "11:00", "code": "102169", "subject": "Xarxes", "type": "TE", "room": "" },
+          { "day": "Dimarts",  "start": "09:00", "end": "11:00", "code": "107571", "subject": "Societat de la Informació", "type": "TE", "room": "" },
+          { "day": "Dijous",   "start": "15:30", "end": "17:30", "code": "102170", "subject": "Tecnologia Web", "type": "TE", "room": "" }
+        ],
+        "2": [
+          { "day": "Dimarts",  "start": "17:00", "end": "18:45", "code": "107566", "subject": "Estratègia i lideratge digital", "type": "TE", "room": "" },
+          { "day": "Dimecres", "start": "17:00", "end": "18:45", "code": "102175", "subject": "Projectes de desenvolupament de software corporatiu", "type": "TE", "room": "" },
+          { "day": "Divendres","start": "17:00", "end": "18:45", "code": "102167", "subject": "Sistemes d'Informació per a la Gestió d'Operacions", "type": "TE", "room": "" }
+        ]
+      }
+    }
+  ]
+}

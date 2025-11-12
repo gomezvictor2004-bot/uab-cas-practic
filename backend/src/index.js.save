@@ -1,0 +1,307 @@
+
+// backend/src/index.js (CommonJS)
+const express = require("express");
+require("dotenv").config();
+const axios = require("axios");
+
+const { scrapeExample } = require("./scrape/example");
+const { listCourses, getSchedule } = require("./schedule/store");
+const { dayNameCA, tomorrowNameCA, weekNamesCA } = require("./schedule/dates");
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+
+// ===== Memòria simple: userId -> { course, semester } =====
+const userCourseMap = new Map();
+
+// ---- Salut
+app.get("/health", (req, res) => {
+  res.json({ ok: true, service: "smart-unibot-backend" });
+});
+
+// ----- Endpoint de estado general
+app.get("/api/status", (req, res) => {
+  res.json({
+    ok: true,
+    service: "smart-unibot",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
+});
+
+const fs = require("fs");
+const path = require("path");
+const DATA_PATH = path.join(__dirname, "../data/state.json");
+
+// Utilidades de estado (demo JSON)
+function loadState() {
+  try { return JSON.parse(fs.readFileSync(DATA_PATH, "utf8")); }
+  catch { return { tasks: [] }; }
+}
+function saveState(state) {
+  fs.writeFileSync(DATA_PATH, JSON.stringify(state, null, 2));
+}
+
+// ----- Lista de tareas
+app.get("/api/tasks", (req, res) => {
+  const state = loadState();
+  res.json({ ok: true, tasks: state.tasks || [] });
+});
+
+// ----- Crear tarea
+app.post("/api/tasks", (req, res) => {
+  const state = loadState();
+  const task = { id: Date.now(), ...req.body };
+  state.tasks.push(task);
+  saveState(state);
+  res.status(201).json({ ok: true, task });
+});
+
+// ----- Briefing diario (demo)
+app.get("/api/briefings", (req, res) => {
+  const studentId = req.query.studentId || "demo";
+  res.json({
+    ok: true,
+    studentId,
+    briefing: [
+      { type: "class", text: "Clase de Macroeconomía a las 10:00" },
+      { type: "deadline", text: "Entrega de Innovación el viernes" },
+      { type: "news", text: "Nuevo calendario académico publicado" },
+    ],
+  });
+});
+
+// ----- Resumen de apuntes con IA
+const OpenAI = require("openai");
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+app.post("/api/documents/summary", async (req, res) => {
+  const { text } = req.body;
+  if (!text) return res.status(400).json({ ok: false, error: "MISSING_TEXT" });
+
+  try {
+    const completion = await openai.chat.completions.create({
+  }
+});
+
+// ----- Endpoint de estado general
+app.get("/api/status", (req, res) => {
+  res.json({
+    ok: true,
+    service: "smart-unibot",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
+});
+
+
+
+// ---- Scrape d’exemple (Puppeteer)
+app.get("/scrape/ejemplo", async (req, res) => {
+  try {
+    const data = await scrapeExample();
+    res.json(data);
+  } catch (err) {
+    console.error("Scrape error:", err);
+    res.status(500).json({ ok: false, error: "SCRAPE_FAILED" });
+  }
+});
+
+// ---- Llista de cursos
+app.get("/courses", (req, res) => {
+  res.json({ ok: true, courses: listCourses() });
+});
+
+// ---- Horari per curs/semestre (o per userId)
+app.get("/schedule", (req, res) => {
+  let { userId, course, semester } = req.query;
+
+  if (userId && (!course || !semester)) {
+    const saved = userCourseMap.get(String(userId));
+    if (saved) {
+      course = course || saved.course;
+      semester = semester || saved.semester;
+    }
+  }
+  course = course || "eit-1";
+  semester = String(semester || "1");
+
+  const items = getSchedule(course, semester);
+  if (!items) return res.status(404).json({ ok: false, error: "COURSE_NOT_FOUND" });
+  res.json({ ok: true, course, semester, items });
+});
+
+// ---- Desa selecció de curs/semestre per a un usuari
+// POST /mycourse  body: { userId: "victor", course: "eit-4", semester: 2 }
+app.post("/mycourse", (req, res) => {
+  const { userId, course, semester } = req.body || {};
+  if (!userId || !course || !semester) {
+    return res.status(400).json({ ok: false, error: "MISSING_FIELDS" });
+  }
+  userCourseMap.set(String(userId), { course, semester: String(semester) });
+  res.json({ ok: true, saved: { userId, course, semester: String(semester) } });
+});
+
+// ===== Utilitats Telegram
+const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TG_API = BOT_TOKEN ? `https://api.telegram.org/bot${BOT_TOKEN}` : null;
+
+async function tgSend(chatId, text) {
+  if (!TG_API) return;
+  await axios.post(`${TG_API}/sendMessage`, { chat_id: chatId, text });
+}
+
+function formatItems(day, course, semester, items) {
+  if (!items || items.length === 0) {
+    return `📅 ${day}\n${course} · S${semester}\n\nAvui no hi ha classes. 🎉`;
+  }
+  const lines = items
+    .map((i) => {
+      const aula = i.room ? ` · Aula ${i.room}` : "";
+      return `• ${i.start}-${i.end} · ${i.subject} (${i.type})${aula}`;
+    })
+    .join("\n");
+  return `📅 ${day}\n${course} · S${semester}\n\n${lines}`;
+}
+
+// ---- Utilitats per a comandes
+function normalizeCmd(s = "") {
+  return s
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")   // elimina diacrítics
+    .replace(/\s+/g, " ");
+}
+
+function parseCmdLine(rawText = "") {
+  const norm = normalizeCmd(rawText);
+  const parts = norm.split(/\s+/);
+  const cmd = (parts[0] || "").split("@")[0]; // elimina @smart_unibot...
+  const args = parts.slice(1);
+  return { cmd, args, norm, raw: String(rawText || "") };
+}
+
+function matchCmd(textNorm, raw, variants) {
+  const a = textNorm;
+  const b = raw.toLowerCase();
+  return variants.some((v) => a.startsWith(v) || b.startsWith(v));
+}
+
+// ---- Telegram webhook (CAT)
+app.post("/telegram/webhook", async (req, res) => {
+  try {
+    const update = req.body;
+    if (!update.message) return res.json({ ok: true });
+    const chatId = update.message.chat.id;
+
+    const { cmd, args, norm, raw } = parseCmdLine(String(update.message.text || ""));
+    const userId = String(chatId);
+    const saved = userCourseMap.get(userId);
+
+    // /start
+    if (cmd === "/start") {
+      await tgSend(
+        chatId,
+`Hola! Sóc l’Smart UniBot 🤖
+Comandes:
+/cursos
+/setcurs <curs> <semestre>
+/avui · /dema · /setmana`
+      );
+      return res.json({ ok: true });
+    }
+
+    // /cursos
+    if (cmd === "/cursos") {
+      const list = listCourses()
+        .map((c) => `- ${c.id}: ${c.name} (${c.group})`)
+        .join("\n");
+      await tgSend(chatId, `Cursos disponibles:\n${list}\n\nExemple:\n/setcurs eit-4 2`);
+      return res.json({ ok: true });
+    }
+
+    // /setcurs <curs> <semestre>
+    if (cmd === "/setcurs") {
+      const course = args[0];
+      const semester = args[1];
+      if (!course || !semester) {
+        await tgSend(chatId, `Ús: /setcurs <curs> <semestre>\nExemple: /setcurs eit-4 2`);
+      } else {
+        userCourseMap.set(userId, { course, semester: String(semester) });
+        await tgSend(
+          chatId,
+          `✅ Desat: ${course} · S${semester}\nAra pots fer /avui, /dema o /setmana.`
+        );
+      }
+      return res.json({ ok: true });
+    }
+
+    // Curs/semestre per memòria o per defecte
+    const course = saved?.course || "eit-1";
+    const semester = saved?.semester || "1";
+
+    // /avui
+    if (matchCmd(norm, raw, ["/avui"])) {
+      const all = getSchedule(course, semester);
+      const day = dayNameCA();
+      const items = all ? all.filter((x) => x.day === day).sort((a, b) => a.start.localeCompare(b.start)) : null;
+      await tgSend(chatId, formatItems(day, course, semester, items));
+      return res.json({ ok: true });
+    }
+
+    // /dema (accepta /dema i /dema)
+    if (matchCmd(norm, raw, ["/dema", "/dema"])) {
+      const all = getSchedule(course, semester);
+      const day = tomorrowNameCA();
+      const items = all ? all.filter((x) => x.day === day).sort((a, b) => a.start.localeCompare(b.start)) : null;
+      await tgSend(chatId, formatItems(day, course, semester, items));
+      return res.json({ ok: true });
+    }
+
+    // /setmana
+    if (matchCmd(norm, raw, ["/setmana"])) {
+      const all = getSchedule(course, semester) || [];
+      const days = weekNamesCA();
+      let msg = `🗓 Setmana · ${course} · S${semester}\n\n`;
+      for (const d of days) {
+        const items = all.filter((x) => x.day === d).sort((a, b) => a.start.localeCompare(b.start));
+        msg += formatItems(d, course, semester, items).replace(/^📅 /, "") + "\n\n";
+      }
+      await tgSend(chatId, msg.trim());
+      return res.json({ ok: true });
+    }
+
+
+
+    // /reinicia
+    if (cmd === "/reinicia") {
+      userCourseMap.delete(userId);
+      await tgSend(
+        chatId,
+        `🔄 Has reiniciat la configuració.
+Torna a escollir el curs amb /setcurs <curs> <semestre> o escriu /cursos per veure’n la llista.`
+      );
+      return res.json({ ok: true });
+    }
+
+
+
+    // Ajuda per defecte
+    await tgSend(
+      chatId,
+`No t’he entès 🙈
+Comandes: /avui · /dema · /setmana · /cursos · /setcurs <curs> <semestre>`
+    );
+    res.json({ ok: true });
+  } catch (e) {
+    console.error("Telegram webhook error", e.message);
+    res.status(200).json({ ok: true });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Backend escoltant a http://localhost:${PORT}`);
+});
