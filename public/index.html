@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart UniBot Dashboard</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Smart UniBot</h1>
+      <p class="subtitle">Panel de control del asistente universitario</p>
+    </header>
+
+    <main>
+      <section id="status-card" class="card">
+        <h2>Estado del servicio</h2>
+        <div class="content status-content">
+          <span class="status-indicator" data-status="unknown"></span>
+          <p id="status-message">Comprobando estado...</p>
+        </div>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <header>
+            <h2>Briefing diario</h2>
+            <button id="refresh-briefing" class="secondary">Actualizar</button>
+          </header>
+          <div id="briefing-content" class="content">
+            <p class="empty">Aún no hay briefing generado.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <header>
+            <h2>Tareas y entregas</h2>
+            <button id="refresh-tasks" class="secondary">Actualizar</button>
+          </header>
+          <div id="tasks-content" class="content">
+            <p class="empty">No se han cargado tareas.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="card">
+        <header>
+          <h2>Resúmenes de documentos</h2>
+        </header>
+        <form id="summary-form" class="content">
+          <label for="document-text">Introduce el texto o apuntes:</label>
+          <textarea id="document-text" rows="6" placeholder="Pega aquí tus apuntes o notas"></textarea>
+          <div class="form-row">
+            <label for="document-language">Idioma</label>
+            <select id="document-language">
+              <option value="es">Español</option>
+              <option value="ca">Catalán</option>
+              <option value="en">Inglés</option>
+            </select>
+          </div>
+          <button type="submit">Generar resumen</button>
+        </form>
+        <div id="summary-result" class="content hidden"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        Smart UniBot &middot; Plataforma de apoyo académico para la UAB.
+      </p>
+    </footer>
+
+    <template id="task-template">
+      <article class="task">
+        <header>
+          <h3 class="task-title"></h3>
+          <span class="task-status"></span>
+        </header>
+        <p class="task-course"></p>
+        <p class="task-due"></p>
+      </article>
+    </template>
+
+    <template id="briefing-template">
+      <article class="briefing-block">
+        <h3></h3>
+        <ul></ul>
+      </article>
+    </template>
+
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
