@@ -80,6 +80,40 @@ npm run dev
 
 Los datos se guardan en `data/state.json` para simplificar la demo. En producción se recomienda sustituirlo por una base de datos (PostgreSQL, MongoDB, etc.).
 
+## 📋 Información que necesitamos para personalizarlo a la UAB
+
+Para que el Smart UniBot refleje fielmente los portales y procesos de la UAB necesitamos los siguientes insumos:
+
+1. **Portales y autenticación**
+   - URLs de acceso a los servicios oficiales (SIGMA, Moodle, Campus Virtual, calendario académico, tablones de noticias).
+   - Método de autenticación (SSO corporativo, login clásico, MFA) y, si es posible, un usuario de pruebas o credenciales temporales.
+   - Restricciones de uso (horarios, IPs permitidas, políticas de rate limiting).
+
+2. **Estructura de datos académicos**
+   - Formato de horarios (campos que aparecen en cada clase: aula, edificio, tipo, docente, etc.).
+   - Estructura del calendario de exámenes y entregas.
+   - Cómo se identifican las asignaturas (códigos oficiales, cursos, grupos).
+
+3. **Fuentes de noticias y avisos**
+   - URLs RSS/Atom o páginas donde se publican novedades.
+   - Criterios de relevancia o categorías prioritarias.
+   - Frecuencia con la que se actualizan.
+
+4. **Política de documentos y apuntes**
+   - Tipos de archivos habituales (PDF, DOCX, presentaciones) y tamaños máximos previstos.
+   - Idiomas predominantes para afinar los prompts de resumen.
+   - Requisitos de privacidad o retención de datos.
+
+5. **Canales de notificación y automatización**
+   - Herramientas que ya utilicéis (correo institucional, Telegram, Teams, app móvil) y cómo integrarlas (webhooks, bots, API keys).
+   - Flujo deseado para n8n: triggers, plantillas de mensajes, calendarios con los que sincronizar.
+
+6. **Métricas y seguimiento**
+   - Indicadores que os interesen (uso diario, tasa de apertura de recordatorios, satisfacción, incidencias).
+   - Cualquier requisito de reporting para Comet u otra plataforma de analítica.
+
+Con esta información podremos adaptar los scrapers, workflows y resúmenes de IA al contexto real de la UAB y dejar el proyecto listo para ser utilizado por el equipo.
+
 ## 🔄 Automatizaciones con n8n
 
 1. **Scraping diario**: `schedulerService` ejecuta `syncAcademicData()` a la hora configurada (`DAILY_BRIEF_CRON`).
